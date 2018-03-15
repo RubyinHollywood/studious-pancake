@@ -14,3 +14,4 @@ See [these docs](https://github.com/sendwithus/battlesnake-server#competitors-gu
 Since we're short on time, we've provided a starting Snake class which should avoid hitting itself and walls and allow
 you to focus on your Snake crafting. Feel free to use it or toss it!
 
+🥞👓🥞👓🥞👓🥞👓🥞👓🥞👓🥞👓🥞👓🥞👓🥞👓🥞👓🥞👓🥞👓🥞👓🥞👓🥞
