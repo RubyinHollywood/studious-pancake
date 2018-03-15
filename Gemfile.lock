@@ -1,8 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    json (1.8.1)
-    rack (1.6.0)
+    json (2.1.0)
+    minitest (5.11.3)
+    rack (1.6.9)
     sinatra (1.1.0)
       rack (~> 1.1)
       tilt (~> 1.1)
@@ -13,4 +14,8 @@ PLATFORMS
 
 DEPENDENCIES
   json
+  minitest
   sinatra (= 1.1.0)
+
+BUNDLED WITH
+   1.16.0
