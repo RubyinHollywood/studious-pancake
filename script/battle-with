@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+
+require 'net/http'
+
+# this can be used in script/bootstrap and then also if someone
+# wants to set a game up to battle someone else
+#
+
+snakes = ARGV.clone
+
+if snakes.length < 2
+  puts "usage: #{$0} <url of snake> <url of snake> ... needs at _least_ two snakes, can be more"
+  exit 1
+end
+
+
+# make us a POST to snake server
+game_id = 1
+
+# This is a person creating their own game
+if $stdout.isatty?
+  puts "Visit your game at:
+
+  http://battlesnake.local/#{game_id}
+  "
+else # this is script bootstrap
+  print game_id
+end
