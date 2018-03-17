@@ -3,13 +3,19 @@
 require 'socket'
 require 'pathname'
 
-output = `bundle install --gemfile ../Gemfile`
+puts "👋 Welcome to Ruby in Hollywood Battlesnake!
+
+Bundling to make sure you've got the gems we're using...
+"
+
+output = `bundle install --gemfile Gemfile`
 
 if $?.exitstatus != 0
   puts output
   exit 1
 end
 
+puts "Bundle complete, registering you with our Battlesnake server..."
 
 game_id_file = Pathname.new(__FILE__).dirname.dirname.join('.gameid')
 
@@ -41,7 +47,8 @@ else
   game_id
 end
 
-puts "Awesome! You should be setup!
+puts "
+Awesome! You should be setup!
 
 From here you can run `script/snake` to start your 🐍
 

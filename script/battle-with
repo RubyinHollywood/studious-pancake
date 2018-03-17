@@ -18,7 +18,7 @@ end
 game_id = 1
 
 # This is a person creating their own game
-if $stdout.isatty?
+if $stdout.isatty
   puts "Visit your game at:
 
   http://battlesnake.local/#{game_id}

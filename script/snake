@@ -1,4 +1,10 @@
 #!/bin/bash
 
+echo "Starting your Snake"
+echo
+echo "Using rerun, we will monitor your app for updates and restart it so you don't have to!"
+echo
+echo "Have fun!! 🎉"
+echo
 # Rackup has to bind to 0.0.0.0 so that snake is reachable from server.
-bundle exec rackup config.ru --host 0.0.0.0
+bundle exec rerun --signal INT --pattern '**/*.{rb,ru,yml}' -- bundle exec rackup config.ru --host 0.0.0.0
