@@ -17,34 +17,33 @@ end
 
 puts "Bundle complete, registering you with our Battlesnake server..."
 
-game_id_file = Pathname.new(__FILE__).dirname.dirname.join('.gameid')
+$game_id_file = Pathname.new(__FILE__).dirname.dirname.join('.gameid')
 
-game_id = if game_id_file.exist?
-  game_id_file.read.chomp
-else
+def create_game
+  puts
+  puts "To create your first game (you will hopefully create many with `script/battle-with`),"
+  puts "what's a good name for your snake?"
+  me = gets.chomp
+  puts "What's a good name for your snake's nemesis?"
+  nemesis = gets.chomp
   ip_address = Socket.ip_address_list.find { |ai| ai.ipv4? && !ai.ipv4_loopback? }.ip_address
 
-  # TODO: mimic a form posting to https://github.com/sendwithus/battlesnake-server/blob/master/lib/bs_web/controllers/game_controller.ex#L19-L28
-  #
-  # I'm planning on bringing an extra laptop and running the server there.
-  #
-  # I think I should be able to set the hostname of that laptop so that it responds to
-  #
-  # http://battlesnake.local
-  #
-  # Each game requires two snakes, I can't figure out a way around that
-  #
-  # but, both snakes can run from the same Sinatra app. Since each POST to /move
-  # has the entire game state the Sinatra app itself can be stateless.
-  #
-  # So in here if we setup this person with a game with two snakes pointing to their IP at 9292
-  # then they'll be able to play the game against themselves
-  #
-  game_id = `./script/battle-with http://#{ip_address}:9292 http://#{ip_address}:9292`
-
-  File.write(game_id_file, game_id.to_s)
+  game_id = `./script/battle-with #{me}=http://#{ip_address}:9292 #{nemesis}=http://#{ip_address}:9292`
+  File.write($game_id_file, game_id)
 
   game_id
+end
+
+game_id = if $game_id_file.exist?
+  id = $game_id_file.read
+  # sometimes the .gameid file is created but empty since it failed previously,
+  # make sure we try again if we don't get one read.
+  unless id && id.length > 0
+    id = create_game
+  end
+  id
+else
+  create_game
 end
 
 puts "
@@ -52,6 +51,6 @@ Awesome! You should be setup!
 
 From here you can run `script/snake` to start your 🐍
 
-and then visit http://battlesnake.local/#{game_id} to watch your snake duke it out!
+and then visit #{ENV["SNAKE_SERVER"] || "http://battlesnake.local:3000"}/#{game_id} to watch your snake duke it out!
 "
 

@@ -1,28 +1,54 @@
 #!/usr/bin/env ruby
 
 require 'net/http'
+require 'pry'
 
 # this can be used in script/bootstrap and then also if someone
 # wants to set a game up to battle someone else
 #
 
+server = ENV["SNAKE_SERVER"] || "http://battlesnake.local:3000"
+
 snakes = ARGV.clone
 
 if snakes.length < 2
-  puts "usage: #{$0} <url of snake> <url of snake> ... needs at _least_ two snakes, can be more"
+  puts "usage: #{$0} <name of snake>=<url of snake> <name of snake>=<url of snake> ... needs at _least_ two snakes, can be more"
   exit 1
 end
 
+default_name = `hostname`.split(' ').first
 
 # make us a POST to snake server
-game_id = 1
+args = {
+  'game_form[division]' => 'intermediate',
+  'game_form[width]' => 15,
+  'game_form[height]' => 15,
+  'game_form[max_food]' => 3,
+}
 
-# This is a person creating their own game
-if $stdout.isatty
-  puts "Visit your game at:
+snakes.each_with_index do |snake, index|
+  url, name = snake.split("=").reverse
+  name ||= "#{default_name} #{index + 1}"
+  args["game_form[snakes][#{index}][name]"] = name
+  args["game_form[snakes][#{index}][url]"] = url
+end
 
-  http://battlesnake.local/#{game_id}
-  "
-else # this is script bootstrap
-  print game_id
+response = Net::HTTP.post_form(URI(server), args)
+if response.code == '302'
+  game_id = response.each_header.to_h['location'].split('/')[1]
+
+  # This is a person creating their own game
+  if $stdout.isatty
+    puts "
+    🐉 vs 🐍 it's on!
+
+    Visit your game at:
+
+    #{server}/#{game_id}
+    "
+  else # this is script bootstrap
+    print game_id
+  end
+else
+  $stderr.puts "Uh-oh, failed to create your game! code = #{response.code},\n#{response.body}"
 end
