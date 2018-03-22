@@ -3,6 +3,9 @@ require 'json'
 require 'pp'
 require_relative 'snake'
 
+TAUNTS = ["This isn't your moms Ruby in Hollywood", "This isn't your dads Ruby in Hollywood", "Get outta town!", "Come and get me!", "Gotta get that food!", "I'm tired of these muther fucking snakes in the mother fucking code!"]
+HEAD_TYPES = %w|bendr dead fang pixel regular safe sand-worm shades smile tongue|
+TAIL_TYPES = %w|block-bum curled fat-rattle freckled pixel regular round-bum skinny small-rattle|
 class BattleSnake < Sinatra::Base
   before { content_type "application/json" }
 
@@ -19,44 +22,51 @@ class BattleSnake < Sinatra::Base
 
     # Get ready to start a game with the request data
 
-    # Dummy response
-    taunt = ["This isn't your moms Ruby in Hollywood", "This isn't your dads Ruby in Hollywood", "Get outta town!"].sample
+    colour = "%06x" % (rand * 0xffffff)
+    taunt = ["This isn't your moms Ruby in Hollywood", "This isn't your dads Ruby in Hollywood", "Get outta town!", "Come and get me!", "Gotta get that food!", "I'm tired of these muther fucking snakes in the mother fucking code!"]
+    head = %w|bendr dead fang pixel regular safe sand-worm shades smile tongue|.sample
+    tail = %w|block-bum curled fat-rattle freckled pixel regular round-bum skinny small-rattle|.sample
     response = {
-      "taunt" => taunt,
+      "taunt" => taunt.sample,
+      "color" => "##{colour}",
+      "head_type" => head,
+      "tail_type" => tail
     }
 
     response.to_json
   end
 
   post '/move' do
-    requestBody = request.body.read
-    requestJson = requestBody ? JSON.parse(requestBody) : {}
+    string = request.body.read
+    json = string ? JSON.parse(string) : {}
+    board = Board.from(json: json)
 
-    snake = Snake.new(requestJson['you'])
-    # Calculate a move with the request data
+    snake = board.you
 
-    # Dummy response
-    puts "="* 50
-    p snake.name, snake.available_moves, snake.body
-    puts "="* 50
-    direction = snake.available_moves.sample
-    responseObject = {
-      "move" => direction.to_s
+    # puts "="* 50
+    # p snake.name, snake.available_moves(board), snake.body
+    # puts "="* 50
+
+    direction = snake.available_moves(board).sample
+    # TODO: get some more taunts going here.
+    response = {
+      "move" => direction.to_s,
+      "taunt" => TAUNTS.sample
     }
 
-    p responseObject
-    return responseObject.to_json
+    p response
+    response.to_json
   end
 
   post '/end' do
-    p :end
-      requestBody = request.body.read
-      requestJson = requestBody ? JSON.parse(requestBody) : {}
+    string = request.body.read
+    json = string ? JSON.parse(string) : {}
 
-      p requestJson
-      # No response required
-      responseObject = {}
+    puts "Game over:"
+    p json
+    # No response required
+    response = {}
 
-      return responseObject.to_json
+    response.to_json
   end
 end

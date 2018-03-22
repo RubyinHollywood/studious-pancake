@@ -6,5 +6,9 @@ echo "Using rerun, we will monitor your app for updates and restart it so you do
 echo
 echo "Have fun!! 🎉"
 echo
+
+# Default to the default rackup port but allow passing a port as $1
+PORT=${1:-9292}
+
 # Rackup has to bind to 0.0.0.0 so that snake is reachable from server.
-bundle exec rerun --signal INT --pattern '**/*.{rb,ru,yml}' -- bundle exec rackup config.ru --host 0.0.0.0
+bundle exec rerun --signal INT --pattern '**/*.{rb,ru,yml}' -- bundle exec rackup config.ru --host 0.0.0.0 -p $PORT
