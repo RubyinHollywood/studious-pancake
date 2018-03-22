@@ -28,7 +28,7 @@ def create_game
   nemesis = gets.chomp
   ip_address = Socket.ip_address_list.find { |ai| ai.ipv4? && !ai.ipv4_loopback? }.ip_address
 
-  game_id = `./script/battle-with #{me}=http://#{ip_address}:9292 #{nemesis}=http://#{ip_address}:9292`
+  game_id = `./script/battle-with "#{me}=http://#{ip_address}:9292" "#{nemesis}=http://#{ip_address}:9292"`
   File.write($game_id_file, game_id)
 
   game_id
