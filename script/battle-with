@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'net/http'
-require 'pry'
 
 # this can be used in script/bootstrap and then also if someone
 # wants to set a game up to battle someone else
